@@ -225,7 +225,7 @@ const Portfolio = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h4>Upload Demo Video</h4>
-                        <p className="modal-instruction">Please upload a short video demonstrating your project.</p>
+                        <p className="modal-instruction">Please upload a short video demonstrating your projects.</p>
                         <input type="file" accept="video/*" onChange={handleFileChange} />
                         <div className="modal-actions">
                             <button onClick={handleCloseModal}>Cancel</button>
