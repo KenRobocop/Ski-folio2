@@ -24,6 +24,12 @@ const AdminPage = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
   const [isUserClassVisible, setIsUserClassVisible] = useState(true)
   const [isUserApproval, setUserApproval] = useState(true)
+
+  const [announcements, setAnnouncements] = useState([]);
+    const [newAnnouncement, setNewAnnouncement] = useState('');
+    const [activeTab, setActiveTab] = useState('manageUsers');
+
+  
   // Fetch Applicants
   useEffect(() => {
     const fetchApplicants = async () => {

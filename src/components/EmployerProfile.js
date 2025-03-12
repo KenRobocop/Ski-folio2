@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db, auth, storage } from "../firebase";
-import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc,addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import "../styles.css";
 
@@ -116,10 +116,47 @@ const EmployerProfile = () => {
     setEditedData({ ...editedData, [e.target.name]: e.target.value });
   };
 
-  const handleEmailSend = () => {
-    const mailtoLink = `mailto:${selectedApplicant.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoLink;
+  const handleEmailSend = async () => {
+    if (!selectedApplicant || !selectedJob || !employer) {
+        console.error("Missing required data (applicant, job, or employer).");
+        return;
+    }
+
+    try {
+        // Reference to the applicant's notifications subcollection
+        const notificationsRef = collection(db, "applicants", selectedApplicant.id, "notifications");
+
+        // Create the notification object with company name, email subject, and email body
+        const newNotification = {
+            jobId: selectedJob,
+            companyName: employer.companyName,  // Include company name
+            subject: emailSubject,  // Include email subject
+            message: `Company: ${employer.companyName}\nSubject: ${emailSubject}\n\n${emailBody}`,  // Include company name, subject, and body
+            timestamp: new Date(),
+            status: "unread",
+        };
+
+        // Add the notification to Firestore
+        await addDoc(notificationsRef, newNotification);
+
+        console.log("Notification added successfully!");
+
+        // Send email
+
+
+        // Show success alert
+        alert("Email sent successfully!");
+
+        // Close the applicant submission modal
+        setSelectedApplicant(null);
+        
+    } catch (error) {
+        console.error("Error sending email or updating Firestore:", error);
+        alert("Failed to send email. Please try again.");
+    }
 };
+
+
 
     return (
       <div className="employer-profile">
