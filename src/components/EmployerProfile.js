@@ -146,7 +146,7 @@ const EmployerProfile = () => {
             jobId: selectedJob,
             companyName: employer.companyName,  // Include company name
             subject: emailSubject,  // Include email subject
-            message: `Company: ${employer.companyName}\nSubject: ${emailSubject}\n\n${emailBody}`,  // Include company name, subject, and body
+            message: emailBody,  // Include company name, subject, and body
             timestamp: new Date(),
             status: "unread",
         };

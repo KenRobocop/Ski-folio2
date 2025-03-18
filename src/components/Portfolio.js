@@ -36,8 +36,23 @@ const Portfolio = () => {
 
     const fetchUserRepos = async (githubLink) => {
         if (!githubLink) return;
-        
-        const username = githubLink.split('/').pop();
+    
+        let username = "";
+    
+        // Extract username from GitHub profile link (e.g., https://github.com/crajex)
+        if (githubLink.includes("github.com")) {
+            username = githubLink.split('/').pop();
+        }
+        // Extract username from GitHub Pages link (e.g., https://crajex.github.io/NewJeans)
+        else if (githubLink.includes(".github.io")) {
+            username = new URL(githubLink).hostname.split('.')[0];
+        }
+    
+        if (!username) {
+            setError("Invalid GitHub link format.");
+            return;
+        }
+    
         try {
             const response = await axios.get(`https://api.github.com/users/${username}/repos`);
             setUserRepos(response.data.map(repo => repo.name));
@@ -46,6 +61,8 @@ const Portfolio = () => {
             setError("Failed to fetch your GitHub repositories. Please try again later.");
         }
     };
+    
+    
 
     const fetchSubmissions = async () => {
         setLoading(true);
@@ -66,7 +83,15 @@ const Portfolio = () => {
             setLoading(false);
         }
     };
-
+    const validateGitHubUser = async (username) => {
+        try {
+            const response = await axios.get(`https://api.github.com/users/${username}`);
+            return response.status === 200;
+        } catch {
+            return false;
+        }
+    };
+    
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith('video/')) {
@@ -118,23 +143,27 @@ const Portfolio = () => {
 
         // Extract repo name from GitHub URL if applicable
         let belongsToUser = true;
-        if (liveDemoLink.includes('github.com')) {
-            const urlParts = liveDemoLink.split('/');
-            const repoIndex = urlParts.indexOf('github.com') + 2;
+        if (liveDemoLink.includes('github.com') || liveDemoLink.includes('.github.io')) {
+            let repoName = "";
             
-            if (repoIndex < urlParts.length) {
-                const repoName = urlParts[repoIndex].replace('.git', '');
-                
-                // Only validate GitHub repo ownership if we're dealing with a GitHub URL
-                if (!userRepos.includes(repoName)) {
-                    if (window.confirm("This repository doesn't appear to belong to your GitHub account. Do you want to continue anyway?")) {
-                        belongsToUser = true;
-                    } else {
-                        return;
-                    }
+            if (liveDemoLink.includes("github.com")) {
+                const urlParts = liveDemoLink.split('/');
+                const repoIndex = urlParts.indexOf('github.com') + 2;
+                if (repoIndex < urlParts.length) repoName = urlParts[repoIndex].replace('.git', '');
+            } else if (liveDemoLink.includes(".github.io")) {
+                repoName = new URL(liveDemoLink).pathname.split('/')[1]; // Extract repo from GitHub Pages URL
+            }
+        
+            if (!userRepos.includes(repoName)) 
+                alert("Error Repository not Initialized");
+                return;{
+                if (!window.confirm("This repository doesn't appear to belong to your GitHub account. Do you want to continue?")) {
+                    alert("Error repo not owned");
+                    return;
                 }
             }
         }
+        
 
         setSubmissionLoading(true);
 
