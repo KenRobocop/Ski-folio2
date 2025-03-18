@@ -28,8 +28,9 @@
     "yarn": "^1.22.22"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+  "start": "concurrently \"react-scripts --openssl-legacy-provider start\"",
+  "build": "concurrently \"react-scripts --openssl-legacy-provider build\"",
+  "dev": "concurrently \"react-scripts start\" \"node server.js\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -37,7 +38,7 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ] 
   },
   "browserslist": {
     "production": [
@@ -54,7 +55,7 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "eslint": "^8.0.0",
+    "eslint": "^8.53.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-flowtype": "^8.0.3",
     "eslint-plugin-react": "^7.37.2",
